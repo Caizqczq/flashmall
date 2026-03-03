@@ -1,0 +1,48 @@
+server:
+  port: 9080
+
+spring:
+  application:
+    name: flashmall-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: public
+    gateway:
+      routes:
+        # 用户服务
+        - id: flashmall-user
+          uri: lb://flashmall-user
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1
+
+        # 商品服务
+        - id: flashmall-goods
+          uri: lb://flashmall-goods
+          predicates:
+            - Path=/api/goods/**
+          filters:
+            - StripPrefix=1
+
+        # 订单服务
+        - id: flashmall-order
+          uri: lb://flashmall-order
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=1
+
+        # 库存服务
+        - id: flashmall-inventory
+          uri: lb://flashmall-inventory
+          predicates:
+            - Path=/api/stock/**
+          filters:
+            - StripPrefix=1
+
+logging:
+  level:
+    com.flashmall.gateway: debug
