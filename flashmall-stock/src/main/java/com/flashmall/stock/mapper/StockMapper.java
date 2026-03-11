@@ -1,7 +1,7 @@
-package com.flashmall.inventory.mapper;
+package com.flashmall.stock.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.flashmall.inventory.entity.Stock;
+import com.flashmall.stock.entity.Stock;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;

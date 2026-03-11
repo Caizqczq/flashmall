@@ -12,7 +12,7 @@ import com.flashmall.common.result.ResultCodeEnum;
 import com.flashmall.order.dto.CreateOrderDTO;
 import com.flashmall.order.entity.Order;
 import com.flashmall.order.feign.GoodsFeignClient;
-import com.flashmall.order.feign.InventoryFeignClient;
+import com.flashmall.order.feign.StockFeignClient;
 import com.flashmall.order.mapper.OrderMapper;
 import com.flashmall.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import java.util.Map;
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements OrderService {
 
     private final GoodsFeignClient goodsFeignClient;
-    private final InventoryFeignClient inventoryFeignClient;
+    private final StockFeignClient stockFeignClient;
 
     private static final Snowflake SNOWFLAKE = IdUtil.getSnowflake(1, 1);
 
@@ -47,7 +47,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         BigDecimal goodsPrice = new BigDecimal(goodsData.get("goodsPrice").toString());
 
         // 2. 扣减库存
-        Result<Void> deductResult = inventoryFeignClient.deductStock(dto.getGoodsId(), dto.getQuantity());
+        Result<Void> deductResult = stockFeignClient.deductStock(dto.getGoodsId(), dto.getQuantity());
         if (deductResult.getCode() != 200) {
             throw new BizException(ResultCodeEnum.STOCK_NOT_ENOUGH);
         }

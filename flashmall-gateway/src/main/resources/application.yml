@@ -36,8 +36,8 @@ spring:
             - StripPrefix=1
 
         # 库存服务
-        - id: flashmall-inventory
-          uri: lb://flashmall-inventory
+        - id: flashmall-stock
+          uri: lb://flashmall-stock
           predicates:
             - Path=/api/stock/**
           filters:

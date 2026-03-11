@@ -1,11 +1,11 @@
-package com.flashmall.inventory.controller;
+package com.flashmall.stock.controller;
 
 import com.flashmall.common.exception.BizException;
 import com.flashmall.common.result.Result;
 import com.flashmall.common.result.ResultCodeEnum;
-import com.flashmall.inventory.dto.StockDTO;
-import com.flashmall.inventory.entity.Stock;
-import com.flashmall.inventory.service.StockService;
+import com.flashmall.stock.dto.StockDTO;
+import com.flashmall.stock.entity.Stock;
+import com.flashmall.stock.service.StockService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

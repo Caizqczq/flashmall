@@ -5,8 +5,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "flashmall-inventory")
-public interface InventoryFeignClient {
+@FeignClient(name = "flashmall-stock")
+public interface StockFeignClient {
 
     @PostMapping("/stock/deduct")
     Result<Void> deductStock(@RequestParam("goodsId") Long goodsId,

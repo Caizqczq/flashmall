@@ -1,4 +1,4 @@
-package com.flashmall.inventory.entity;
+package com.flashmall.stock.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;

@@ -55,7 +55,7 @@ FlashMall 是一个基于 Spring Cloud 微服务架构的**商品库存与秒杀
 | 用户服务 | flashmall-user | 9081 | 用户注册、登录、JWT 认证、用户信息管理 |
 | 商品服务 | flashmall-goods | 9082 | 商品 CRUD、上下架管理、秒杀商品管理 |
 | 订单服务 | flashmall-order | 9083 | 普通下单、秒杀下单（Phase3）、订单查询、取消 |
-| 库存服务 | flashmall-inventory | 9084 | 库存管理、库存扣减（乐观锁/Lua脚本）、库存回补 |
+| 库存服务 | flashmall-stock | 9084 | 库存管理、库存扣减（乐观锁/Lua脚本）、库存回补 |
 | 公共模块 | flashmall-common | - | 统一响应体、全局异常处理、JWT 工具、分页参数 |
 
 ## 4. 技术栈选型
@@ -310,7 +310,7 @@ mvn clean compile
 3. 启动 flashmall-user（9081）
 4. 启动 flashmall-goods（9082）
 5. 启动 flashmall-order（9083）
-6. 启动 flashmall-inventory（9084）
+6. 启动 flashmall-stock（9084）
 
 ### 9.4 验证服务
 

@@ -1,4 +1,4 @@
-package com.flashmall.inventory.config;
+package com.flashmall.stock.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;

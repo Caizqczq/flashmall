@@ -1,8 +1,8 @@
-package com.flashmall.inventory.service;
+package com.flashmall.stock.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.flashmall.inventory.dto.StockDTO;
-import com.flashmall.inventory.entity.Stock;
+import com.flashmall.stock.dto.StockDTO;
+import com.flashmall.stock.entity.Stock;
 
 public interface StockService extends IService<Stock> {
 

@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: flashmall-inventory
+    name: flashmall-stock
   cloud:
     nacos:
       discovery:
@@ -35,4 +35,4 @@ knife4j:
 
 logging:
   level:
-    com.flashmall.inventory: debug
+    com.flashmall.stock: debug

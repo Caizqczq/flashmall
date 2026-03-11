@@ -1,4 +1,4 @@
-package com.flashmall.inventory.dto;
+package com.flashmall.stock.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

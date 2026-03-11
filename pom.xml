@@ -24,7 +24,7 @@
         <module>flashmall-user</module>
         <module>flashmall-goods</module>
         <module>flashmall-order</module>
-        <module>flashmall-inventory</module>
+        <module>flashmall-stock</module>
     </modules>
 
     <properties>

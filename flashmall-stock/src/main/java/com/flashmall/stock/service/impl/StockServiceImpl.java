@@ -1,13 +1,13 @@
-package com.flashmall.inventory.service.impl;
+package com.flashmall.stock.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.flashmall.common.exception.BizException;
 import com.flashmall.common.result.ResultCodeEnum;
-import com.flashmall.inventory.dto.StockDTO;
-import com.flashmall.inventory.entity.Stock;
-import com.flashmall.inventory.mapper.StockMapper;
-import com.flashmall.inventory.service.StockService;
+import com.flashmall.stock.dto.StockDTO;
+import com.flashmall.stock.entity.Stock;
+import com.flashmall.stock.mapper.StockMapper;
+import com.flashmall.stock.service.StockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
