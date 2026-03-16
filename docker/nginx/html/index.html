@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlashMall 容器压测演示</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<main class="page">
+    <section class="hero">
+        <div>
+            <p class="eyebrow">Docker + Nginx + Redis + JMeter</p>
+            <h1>FlashMall 商品详情缓存与负载均衡演示</h1>
+            <p class="hero-copy">
+                当前页面由 Nginx 直接提供静态资源，商品详情接口通过 Nginx 转发到多个商品服务实例。
+                你可以切换不同算法观察响应头和后端日志。
+            </p>
+        </div>
+        <div class="hero-card">
+            <div class="meta-label">当前算法</div>
+            <select id="lbMode">
+                <option value="roundRobin">轮询 Round Robin</option>
+                <option value="leastConn">最少连接 Least Conn</option>
+                <option value="ipHash">IP Hash</option>
+                <option value="uriHash">URI Consistent Hash</option>
+            </select>
+            <button id="refreshBtn">刷新商品列表</button>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <h2>商品列表</h2>
+            <span id="listStatus" class="status">等待加载</span>
+        </div>
+        <div id="goodsList" class="goods-grid"></div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <h2>商品详情</h2>
+            <span id="detailStatus" class="status">请选择一个商品</span>
+        </div>
+        <pre id="detailResult" class="code-block">暂无数据</pre>
+        <div class="headers">
+            <div><strong>后端实例:</strong> <span id="backendInstance">-</span></div>
+            <div><strong>Nginx 上游:</strong> <span id="nginxUpstream">-</span></div>
+        </div>
+    </section>
+</main>
+
+<script src="/assets/app.js"></script>
+</body>
+</html>

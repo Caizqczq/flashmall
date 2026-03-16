@@ -1,0 +1,9 @@
+.git
+.idea
+.mvn
+**/target
+docker/mysql/data
+docker/redis/data
+docker/nacos/data
+docker/nacos/logs
+*.log

@@ -1,0 +1,256 @@
+services:
+  mysql:
+    image: mysql:8.0.36
+    container_name: flashmall-mysql
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: root
+    command:
+      - --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks:
+      - flashmall-net
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: flashmall-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks:
+      - flashmall-net
+
+  nacos:
+    image: nacos/nacos-server:v2.3.2
+    container_name: flashmall-nacos
+    restart: unless-stopped
+    environment:
+      MODE: standalone
+      PREFER_HOST_MODE: hostname
+      NACOS_AUTH_ENABLE: "false"
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+      JVM_XMN: 128m
+      TZ: Asia/Shanghai
+    ports:
+      - "8848:8848"
+    networks:
+      - flashmall-net
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE_NAME: flashmall-gateway
+    container_name: flashmall-gateway
+    restart: unless-stopped
+    depends_on:
+      - nacos
+    environment:
+      SERVER_PORT: 9080
+      NACOS_ADDR: nacos:8848
+      TZ: Asia/Shanghai
+      JAVA_OPTS: -Xms256m -Xmx256m
+    ports:
+      - "9080:9080"
+    networks:
+      - flashmall-net
+
+  user:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE_NAME: flashmall-user
+    container_name: flashmall-user
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_started
+    environment:
+      SERVER_PORT: 9081
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: flashmall
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      NACOS_ADDR: nacos:8848
+      TZ: Asia/Shanghai
+      JAVA_OPTS: -Xms256m -Xmx256m
+    ports:
+      - "9081:9081"
+    networks:
+      - flashmall-net
+
+  stock:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE_NAME: flashmall-stock
+    container_name: flashmall-stock
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_started
+    environment:
+      SERVER_PORT: 9084
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: flashmall
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      NACOS_ADDR: nacos:8848
+      TZ: Asia/Shanghai
+      JAVA_OPTS: -Xms256m -Xmx256m
+    ports:
+      - "9084:9084"
+    networks:
+      - flashmall-net
+
+  order:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE_NAME: flashmall-order
+    container_name: flashmall-order
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_started
+    environment:
+      SERVER_PORT: 9083
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: flashmall
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      NACOS_ADDR: nacos:8848
+      TZ: Asia/Shanghai
+      JAVA_OPTS: -Xms256m -Xmx256m
+    ports:
+      - "9083:9083"
+    networks:
+      - flashmall-net
+
+  goods-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE_NAME: flashmall-goods
+    container_name: flashmall-goods-1
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8081
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: flashmall
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      NACOS_ADDR: nacos:8848
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GOODS_CACHE_TTL_SECONDS: 300
+      GOODS_CACHE_NULL_TTL_SECONDS: 60
+      GOODS_CACHE_TTL_JITTER_SECONDS: 120
+      GOODS_CACHE_LOCK_SECONDS: 10
+      TZ: Asia/Shanghai
+      JAVA_OPTS: -Xms256m -Xmx256m
+    ports:
+      - "8081:8081"
+    networks:
+      - flashmall-net
+
+  goods-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE_NAME: flashmall-goods
+    container_name: flashmall-goods-2
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nacos:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8082
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: flashmall
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      NACOS_ADDR: nacos:8848
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GOODS_CACHE_TTL_SECONDS: 300
+      GOODS_CACHE_NULL_TTL_SECONDS: 60
+      GOODS_CACHE_TTL_JITTER_SECONDS: 120
+      GOODS_CACHE_LOCK_SECONDS: 10
+      TZ: Asia/Shanghai
+      JAVA_OPTS: -Xms256m -Xmx256m
+    ports:
+      - "8082:8082"
+    networks:
+      - flashmall-net
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: flashmall-nginx
+    restart: unless-stopped
+    depends_on:
+      - goods-1
+      - goods-2
+      - gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./docker/nginx/html:/usr/share/nginx/html:ro
+    networks:
+      - flashmall-net
+
+volumes:
+  mysql-data:
+  redis-data:
+
+networks:
+  flashmall-net:
+    driver: bridge

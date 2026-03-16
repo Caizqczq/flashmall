@@ -57,3 +57,6 @@ logs/
 # Environment
 .env
 .env.local
+
+# JMeter results
+jmeter/*.jtl
