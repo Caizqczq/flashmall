@@ -1,18 +1,56 @@
 services:
   mysql:
     image: mysql:8.0.36
-    container_name: flashmall-mysql
+    container_name: flashmall-mysql-master
     restart: unless-stopped
     environment:
       TZ: Asia/Shanghai
       MYSQL_ROOT_PASSWORD: root
     command:
       - --default-authentication-plugin=mysql_native_password
+      - --server-id=1
+      - --log-bin=mysql-bin
+      - --binlog-format=ROW
+      - --gtid-mode=ON
+      - --enforce-gtid-consistency=ON
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql-master-data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks:
+      - flashmall-net
+
+  mysql-replica:
+    image: mysql:8.0.36
+    container_name: flashmall-mysql-replica
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: root
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --server-id=2
+      - --relay-log=mysql-relay-bin
+      - --log-bin=mysql-bin
+      - --binlog-format=ROW
+      - --read-only=ON
+      - --super-read-only=ON
+      - --gtid-mode=ON
+      - --enforce-gtid-consistency=ON
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-replica-data:/var/lib/mysql
+      - ./docker/mysql/replica-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-proot"]
       interval: 10s
@@ -170,14 +208,18 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      mysql-replica:
+        condition: service_healthy
       redis:
         condition: service_healthy
       nacos:
         condition: service_started
     environment:
       SERVER_PORT: 8081
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
+      MYSQL_MASTER_HOST: mysql
+      MYSQL_MASTER_PORT: 3306
+      MYSQL_SLAVE_HOST: mysql-replica
+      MYSQL_SLAVE_PORT: 3306
       MYSQL_DATABASE: flashmall
       MYSQL_USER: root
       MYSQL_PASSWORD: root
@@ -206,14 +248,18 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      mysql-replica:
+        condition: service_healthy
       redis:
         condition: service_healthy
       nacos:
         condition: service_started
     environment:
       SERVER_PORT: 8082
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
+      MYSQL_MASTER_HOST: mysql
+      MYSQL_MASTER_PORT: 3306
+      MYSQL_SLAVE_HOST: mysql-replica
+      MYSQL_SLAVE_PORT: 3306
       MYSQL_DATABASE: flashmall
       MYSQL_USER: root
       MYSQL_PASSWORD: root
@@ -248,7 +294,8 @@ services:
       - flashmall-net
 
 volumes:
-  mysql-data:
+  mysql-master-data:
+  mysql-replica-data:
   redis-data:
 
 networks:

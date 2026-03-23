@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Tag(name = "商品管理")
 @RestController
 @RequestMapping("/goods")
@@ -31,6 +33,12 @@ public class GoodsController {
     @GetMapping("/detail/{id}")
     public Result<Goods> detail(@PathVariable Long id) {
         return Result.ok(goodsService.getGoodsDetail(id));
+    }
+
+    @Operation(summary = "读写分离路由验证")
+    @GetMapping("/rw/route-test/{id}")
+    public Result<Map<String, Object>> routeTest(@PathVariable Long id) {
+        return Result.ok(goodsService.routeTest(id));
     }
 
     @Operation(summary = "新增商品")
