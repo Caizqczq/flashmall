@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(grep -r \"InventoryFeignClient\\\\|stockService\\\\|deductStock\" /mnt/d/Java/Project/stock/flashmall-order/src --include=\"*.java\" 2>/dev/null | head -20)"
-    ]
-  }
-}

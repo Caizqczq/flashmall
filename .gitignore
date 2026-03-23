@@ -60,3 +60,6 @@ logs/
 
 # JMeter results
 jmeter/*.jtl
+
+# Local AI tool config
+.claude/
