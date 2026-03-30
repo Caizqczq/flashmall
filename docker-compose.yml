@@ -76,6 +76,27 @@ services:
     networks:
       - flashmall-net
 
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: flashmall-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      TZ: Asia/Shanghai
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks:
+      - flashmall-net
+
   nacos:
     image: nacos/nacos-server:v2.3.2
     container_name: flashmall-nacos
@@ -180,6 +201,10 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
       nacos:
         condition: service_started
     environment:
@@ -190,6 +215,12 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: root
       NACOS_ADDR: nacos:8848
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASSWORD: guest
       TZ: Asia/Shanghai
       JAVA_OPTS: -Xms256m -Xmx256m
     ports:
@@ -297,6 +328,7 @@ volumes:
   mysql-master-data:
   mysql-replica-data:
   redis-data:
+  rabbitmq-data:
 
 networks:
   flashmall-net:
