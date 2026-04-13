@@ -94,3 +94,73 @@ CREATE TABLE `t_seckill_order` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_user_goods` (`user_id`, `goods_id`) COMMENT '防止重复秒杀'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='秒杀订单表';
+
+DROP TABLE IF EXISTS `t_order_outbox`;
+CREATE TABLE `t_order_outbox` (
+    `id`              BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `event_id`        VARCHAR(64)  NOT NULL COMMENT '事件ID',
+    `event_type`      VARCHAR(64)  NOT NULL COMMENT '事件类型',
+    `biz_no`          VARCHAR(64)  DEFAULT NULL COMMENT '业务单号（如order_no）',
+    `payload`         TEXT         NOT NULL COMMENT '事件载荷(JSON)',
+    `status`          TINYINT      NOT NULL DEFAULT 0 COMMENT '状态: 0-待投递 1-已投递',
+    `retry_count`     INT          NOT NULL DEFAULT 0 COMMENT '重试次数',
+    `next_retry_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '下次重试时间',
+    `last_error`      VARCHAR(512) DEFAULT NULL COMMENT '最后一次错误',
+    `create_time`     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_order_outbox_event_id` (`event_id`),
+    KEY `idx_order_outbox_dispatch` (`status`, `next_retry_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单服务Outbox事件表';
+
+DROP TABLE IF EXISTS `t_order_consumed_event`;
+CREATE TABLE `t_order_consumed_event` (
+    `id`             BIGINT      NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `consumer_group` VARCHAR(64) NOT NULL COMMENT '消费组',
+    `event_id`       VARCHAR(64) NOT NULL COMMENT '事件ID',
+    `create_time`    DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_order_consumer_event` (`consumer_group`, `event_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单服务消费幂等表';
+
+DROP TABLE IF EXISTS `t_order_payment_record`;
+CREATE TABLE `t_order_payment_record` (
+    `id`          BIGINT         NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `order_no`    VARCHAR(64)    NOT NULL COMMENT '订单号',
+    `pay_txn_id`  VARCHAR(64)    NOT NULL COMMENT '支付流水号',
+    `paid_amount` DECIMAL(10, 2) NOT NULL COMMENT '支付金额',
+    `pay_channel` VARCHAR(32)    NOT NULL COMMENT '支付渠道',
+    `raw_payload` TEXT           DEFAULT NULL COMMENT '原始回调载荷',
+    `create_time` DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_pay_txn_id` (`pay_txn_id`),
+    KEY `idx_pay_order_no` (`order_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单支付记录表';
+
+DROP TABLE IF EXISTS `t_stock_outbox`;
+CREATE TABLE `t_stock_outbox` (
+    `id`              BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `event_id`        VARCHAR(64)  NOT NULL COMMENT '事件ID',
+    `event_type`      VARCHAR(64)  NOT NULL COMMENT '事件类型',
+    `biz_no`          VARCHAR(64)  DEFAULT NULL COMMENT '业务单号',
+    `payload`         TEXT         NOT NULL COMMENT '事件载荷(JSON)',
+    `status`          TINYINT      NOT NULL DEFAULT 0 COMMENT '状态: 0-待投递 1-已投递',
+    `retry_count`     INT          NOT NULL DEFAULT 0 COMMENT '重试次数',
+    `next_retry_time` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '下次重试时间',
+    `last_error`      VARCHAR(512) DEFAULT NULL COMMENT '最后一次错误',
+    `create_time`     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_stock_outbox_event_id` (`event_id`),
+    KEY `idx_stock_outbox_dispatch` (`status`, `next_retry_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='库存服务Outbox事件表';
+
+DROP TABLE IF EXISTS `t_stock_consumed_event`;
+CREATE TABLE `t_stock_consumed_event` (
+    `id`             BIGINT      NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `consumer_group` VARCHAR(64) NOT NULL COMMENT '消费组',
+    `event_id`       VARCHAR(64) NOT NULL COMMENT '事件ID',
+    `create_time`    DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_stock_consumer_event` (`consumer_group`, `event_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='库存服务消费幂等表';

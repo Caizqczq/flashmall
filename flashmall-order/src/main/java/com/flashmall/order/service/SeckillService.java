@@ -12,7 +12,7 @@ public interface SeckillService {
     void initSeckillStock(Long goodsId, Integer stockCount, String goodsName, java.math.BigDecimal seckillPrice);
 
     /**
-     * 秒杀下单（Redis预扣库存 + MQ异步创建订单）
+     * 秒杀下单（Redis预扣库存 + 本地订单落库 + Outbox异步扣库存）
      */
     String doSeckill(Long userId, Long goodsId);
 

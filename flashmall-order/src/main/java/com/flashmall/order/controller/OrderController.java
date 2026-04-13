@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.flashmall.common.result.Result;
 import com.flashmall.common.utils.JwtUtil;
 import com.flashmall.order.dto.CreateOrderDTO;
+import com.flashmall.order.dto.PaymentCallbackDTO;
 import com.flashmall.order.entity.Order;
 import com.flashmall.order.service.OrderService;
+import com.flashmall.order.service.PaymentCallbackService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderService orderService;
+    private final PaymentCallbackService paymentCallbackService;
 
     @Operation(summary = "创建订单")
     @PostMapping
@@ -51,6 +54,13 @@ public class OrderController {
                                @PathVariable Long id) {
         Long userId = JwtUtil.getUserId(token.replace("Bearer ", ""));
         orderService.cancelOrder(userId, id);
+        return Result.ok();
+    }
+
+    @Operation(summary = "支付回调（第三方异步通知）")
+    @PostMapping("/payment/callback")
+    public Result<Void> paymentCallback(@Valid @RequestBody PaymentCallbackDTO dto) {
+        paymentCallbackService.handleCallback(dto);
         return Result.ok();
     }
 }

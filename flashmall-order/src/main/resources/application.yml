@@ -46,6 +46,18 @@ knife4j:
   setting:
     language: zh_cn
 
+order:
+  outbox:
+    dispatch-interval-ms: ${ORDER_OUTBOX_DISPATCH_INTERVAL_MS:3000}
+    batch-size: ${ORDER_OUTBOX_BATCH_SIZE:100}
+  close:
+    delay-ms: ${ORDER_CLOSE_DELAY_MS:900000}
+
+payment:
+  callback:
+    verify-signature: ${PAY_CALLBACK_VERIFY_SIGNATURE:true}
+    secret: ${PAY_CALLBACK_SECRET:flashmall-pay-secret}
+
 logging:
   level:
     com.flashmall.order: debug

@@ -27,7 +27,7 @@ public class Order {
 
     private BigDecimal totalAmount;
 
-    /** 0-待支付 1-已支付 2-已取消 3-已退款 */
+    /** 0-待支付 1-已支付 2-已取消 3-已退款 10-库存确认中 11-库存不足取消 12-支付超时取消 */
     private Integer status;
 
     private LocalDateTime payTime;

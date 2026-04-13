@@ -21,7 +21,8 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
             "/api/user/login",
             "/api/user/register",
             "/api/goods/list",
-            "/api/goods/detail"
+            "/api/goods/detail",
+            "/api/order/payment/callback"
     );
 
     @Override
