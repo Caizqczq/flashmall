@@ -1,0 +1,4 @@
+flashmall:
+  config:
+    stock-message: "stock config from Nacos"
+    version: "stock-v1"

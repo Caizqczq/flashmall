@@ -1,0 +1,4 @@
+flashmall:
+  config:
+    order-message: "order config from Nacos"
+    version: "order-v1"

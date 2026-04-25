@@ -1,0 +1,10 @@
+flashmall:
+  config:
+    gateway-message: "gateway config from Nacos"
+    version: "gateway-v1"
+  traffic:
+    gateway:
+      user-qps: 30
+      goods-qps: 30
+      order-qps: 20
+      stock-qps: 20

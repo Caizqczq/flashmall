@@ -4,12 +4,25 @@ server:
 spring:
   application:
     name: flashmall-goods
+  config:
+    import:
+      - "optional:nacos:flashmall-common.yaml?group=${NACOS_CONFIG_GROUP:DEFAULT_GROUP}&refreshEnabled=true"
+      - "optional:nacos:${spring.application.name}.yaml?group=${NACOS_CONFIG_GROUP:DEFAULT_GROUP}&refreshEnabled=true"
   cloud:
     nacos:
+      config:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_CONFIG_GROUP:DEFAULT_GROUP}
+        file-extension: yaml
       discovery:
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:public}
         instance-id: ${spring.application.name}:${HOSTNAME:localhost}:${server.port}
+    sentinel:
+      eager: true
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8858}
   datasource:
     dynamic:
       primary: master
@@ -53,3 +66,21 @@ knife4j:
 logging:
   level:
     com.flashmall.goods: debug
+
+flashmall:
+  config:
+    common-message: ${FLASHMALL_COMMON_MESSAGE:local-common}
+    goods-message: ${FLASHMALL_GOODS_MESSAGE:local-goods}
+    version: ${FLASHMALL_CONFIG_VERSION:local}
+  traffic:
+    goods:
+      probe-qps: ${GOODS_PROBE_QPS:10}
+      slow-rt-ms: ${GOODS_SLOW_RT_MS:200}
+      slow-ratio-threshold: ${GOODS_SLOW_RATIO_THRESHOLD:0.5}
+      slow-min-request-amount: ${GOODS_SLOW_MIN_REQUEST_AMOUNT:5}
+      slow-stat-interval-ms: ${GOODS_SLOW_STAT_INTERVAL_MS:10000}
+      slow-time-window-seconds: ${GOODS_SLOW_TIME_WINDOW_SECONDS:5}
+      exception-ratio-threshold: ${GOODS_EXCEPTION_RATIO_THRESHOLD:0.5}
+      exception-min-request-amount: ${GOODS_EXCEPTION_MIN_REQUEST_AMOUNT:5}
+      exception-stat-interval-ms: ${GOODS_EXCEPTION_STAT_INTERVAL_MS:10000}
+      exception-time-window-seconds: ${GOODS_EXCEPTION_TIME_WINDOW_SECONDS:5}

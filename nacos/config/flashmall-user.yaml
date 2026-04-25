@@ -1,0 +1,4 @@
+flashmall:
+  config:
+    user-message: "user config from Nacos"
+    version: "user-v1"

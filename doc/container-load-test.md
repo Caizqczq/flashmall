@@ -79,6 +79,14 @@ jmeter -n -t jmeter/goods-detail-lb.jmx -Jpath=/api/lb/urihash/goods/detail/1 -l
 - 轮询和最少连接下，两台商品服务的处理请求数应接近
 - `ip_hash` 下，同一压测源 IP 往往会更集中地命中某一个实例
 
+流量治理压测见：
+
+```bash
+jmeter -n -t jmeter/traffic-governance.jmx -Jpath=/api/goods/traffic/probe -l jmeter/traffic-flow.jtl
+```
+
+完整 Nacos 配置中心、Gateway 动态路由和 Sentinel 验证步骤见 `doc/nacos-gateway-sentinel.md`。
+
 ## 4. 当前缓存策略
 
 商品详情接口已实现 Cache Aside，并处理了三类问题：

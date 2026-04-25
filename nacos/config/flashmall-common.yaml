@@ -1,0 +1,21 @@
+flashmall:
+  config:
+    common-message: "common config from Nacos"
+    version: "common-v1"
+  traffic:
+    gateway:
+      user-qps: 30
+      goods-qps: 30
+      order-qps: 20
+      stock-qps: 20
+    goods:
+      probe-qps: 10
+      slow-rt-ms: 200
+      slow-ratio-threshold: 0.5
+      slow-min-request-amount: 5
+      slow-stat-interval-ms: 10000
+      slow-time-window-seconds: 5
+      exception-ratio-threshold: 0.5
+      exception-min-request-amount: 5
+      exception-stat-interval-ms: 10000
+      exception-time-window-seconds: 5

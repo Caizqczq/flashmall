@@ -1,0 +1,16 @@
+flashmall:
+  config:
+    goods-message: "goods config from Nacos"
+    version: "goods-v1"
+  traffic:
+    goods:
+      probe-qps: 10
+      slow-rt-ms: 200
+      slow-ratio-threshold: 0.5
+      slow-min-request-amount: 5
+      slow-stat-interval-ms: 10000
+      slow-time-window-seconds: 5
+      exception-ratio-threshold: 0.5
+      exception-min-request-amount: 5
+      exception-stat-interval-ms: 10000
+      exception-time-window-seconds: 5

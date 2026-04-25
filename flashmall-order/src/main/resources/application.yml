@@ -4,11 +4,24 @@ server:
 spring:
   application:
     name: flashmall-order
+  config:
+    import:
+      - "optional:nacos:flashmall-common.yaml?group=${NACOS_CONFIG_GROUP:DEFAULT_GROUP}&refreshEnabled=true"
+      - "optional:nacos:${spring.application.name}.yaml?group=${NACOS_CONFIG_GROUP:DEFAULT_GROUP}&refreshEnabled=true"
   cloud:
     nacos:
+      config:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_CONFIG_GROUP:DEFAULT_GROUP}
+        file-extension: yaml
       discovery:
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:public}
+    sentinel:
+      eager: true
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8858}
   data:
     redis:
       host: ${REDIS_HOST:127.0.0.1}

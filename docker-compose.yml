@@ -111,6 +111,8 @@ services:
       TZ: Asia/Shanghai
     ports:
       - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
     networks:
       - flashmall-net
 

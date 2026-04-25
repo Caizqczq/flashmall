@@ -4,12 +4,29 @@ server:
 spring:
   application:
     name: flashmall-gateway
+  config:
+    import:
+      - "optional:nacos:flashmall-common.yaml?group=${NACOS_CONFIG_GROUP:DEFAULT_GROUP}&refreshEnabled=true"
+      - "optional:nacos:${spring.application.name}.yaml?group=${NACOS_CONFIG_GROUP:DEFAULT_GROUP}&refreshEnabled=true"
   cloud:
     nacos:
+      config:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_CONFIG_GROUP:DEFAULT_GROUP}
+        file-extension: yaml
       discovery:
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:public}
+    sentinel:
+      eager: true
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8858}
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       routes:
         # 用户服务
         - id: flashmall-user
@@ -46,3 +63,11 @@ spring:
 logging:
   level:
     com.flashmall.gateway: debug
+
+flashmall:
+  traffic:
+    gateway:
+      user-qps: ${GATEWAY_USER_QPS:30}
+      goods-qps: ${GATEWAY_GOODS_QPS:30}
+      order-qps: ${GATEWAY_ORDER_QPS:20}
+      stock-qps: ${GATEWAY_STOCK_QPS:20}
